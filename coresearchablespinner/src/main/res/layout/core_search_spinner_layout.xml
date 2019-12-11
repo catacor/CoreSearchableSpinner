@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+
+    <FrameLayout
+        android:id="@+id/custom_spinner_full_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/custom_spinner_display_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+
+            <TextView
+                android:id="@+id/custom_spinner_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#333"
+                android:textSize="16sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:drawablePadding="20dp"
+                android:drawableEnd="@drawable/ic_right_drawable_dropdown"
+                android:background="@drawable/custom_edit_text_bg_empty"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/custom_spinner_search_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+
+            <com.catacore.coresearchablespinner.ExtendedEditText
+                android:id="@+id/custom_spinner_search_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#333"
+                android:textSize="16sp"
+                android:paddingStart="20dp"
+                android:drawablePadding="20dp"
+                android:drawableEnd="@drawable/ic_right_drawable_search"
+                android:background="@drawable/custom_edit_text_bg_empty"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"/>
+
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+
+</merge>

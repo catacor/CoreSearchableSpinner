@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SearchableSpinner</string>
+    <string name="no_selection">No selection</string>
+    <string name="action_reset">Reset</string>
+    <string name="appbar_scrolling_view_behavior">Reset</string>
+
+</resources>

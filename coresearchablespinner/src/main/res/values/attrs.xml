@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CoreSearchableSpinner">
+        <attr name="displayBackground" format="integer"/>
+        <attr name="dropdownRightIcon" format="integer"/>
+        <attr name="searchRightIcon" format="integer"/>
+
+        <attr name="defaultDisplayText" format="string"/>
+        <attr name="displayDefaultText" format="boolean"/>
+
+        <attr name="defaultEmptyText" format="string"/>
+        <attr name="displayEmptyText" format="boolean"/>
+
+    </declare-styleable>
+</resources>
