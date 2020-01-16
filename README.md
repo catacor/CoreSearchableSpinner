@@ -43,6 +43,8 @@ Mandatory
 
 4)Don't forget to set the activity to your spinner. You will get the next message if you forget "Set the activity dependencies!". You need that for screen measurments.
 
+5)You have onItemSelected(), getSelectedItemIndex() and getSelectedItem() to magange the spinner result;
+
 Possible existent xml tags:
 ```xml
 name="displayBackground" format="integer"
