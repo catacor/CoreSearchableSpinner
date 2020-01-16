@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -76,9 +77,13 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
     private ArrayList<Listener> mListeners;
 
+    private int selectedIndex;
+    private SearchableItem selectedItem;
+
     public interface Listener{
         //will notify when the spinner is shown
         public void onSpinnerClicked();
+        void onItemClicked(int position);
     }
 
     public void registerListener(Listener listener){
@@ -153,9 +158,19 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
         }
     }
 
+    public int getSelectedIndex(){
+        return selectedIndex;
+    }
+
+    public SearchableItem getSelectedItem(){
+        return selectedItem;
+    }
+
     private void init() {
         mListeners = new ArrayList<>();
         detector = new GestureDetector(this.getContext(),new MyListener());
+        selectedIndex=-1;
+        selectedItem = null;
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.core_search_spinner_layout,this);
@@ -198,11 +213,6 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
         customLayoutList = (LinearLayout) inflater.inflate(R.layout.core_search_spinner_layout_list,this, false);
         popupWindow.setContentView(customLayoutList);
 
-        //setting items
-//        items = new String[]{"File", "Save", "Load", "Edit", "Copy"};
-//        ArrayList<String> lst = new ArrayList<String>(Arrays.asList(items));
-//        itemsAdapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_list_item_1,lst);
-
         contentList = popupWindow.getContentView().findViewById(R.id.core_search_container_list_view);
         contentList.setAdapter(itemsAdapter);
 
@@ -210,6 +220,13 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(itemsAdapter!=null) {
+                    //TODO: add onItemSelected
+                    selectedIndex = position;
+                    selectedItem = (SearchableItem)itemsAdapter.getItem(position);
+
+                    for(Listener listener:mListeners)
+                        listener.onItemClicked(position);
+
                     promptTextView.setText( ((SearchableItem)itemsAdapter.getItem(position)).getDisplayText());
                     hideContent();
                 }
@@ -230,7 +247,16 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
             }
         }
 
-        popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
+        displayLoayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {//called once, after drawing is ready
+                displayLoayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                //use it to set the same width on list
+                int spinnerWidth = displayLoayout.getWidth();
+                popupWindow.setWidth(spinnerWidth);
+            }
+        });
+
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
         popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
