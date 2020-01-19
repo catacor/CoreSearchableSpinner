@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@drawable/custom_edit_text_bg_empty"
+    android:background="#999999"
     android:layout_gravity="center_horizontal"
     android:visibility="visible">
 
@@ -19,7 +19,8 @@
         android:dividerHeight="0dp"
         android:divider="@null"
         android:background="@android:color/white"
-        android:layout_gravity="top"/>
+        android:layout_gravity="top"
+        android:layout_margin="1dp"/>
     <TextView
         android:id="@+id/core_search_container_empty_tag"
         android:visibility="gone"
