@@ -99,9 +99,9 @@ Mandatory
 
 Possible existent xml tags:
 ```xml
-name="displayBackground" format="integer"
-name="dropdownRightIcon" format="integer"
-name="searchRightIcon" format="integer"
+name="displayBackground" format="reference|integer"
+name="dropdownRightIcon" format="reference|integer"
+name="searchRightIcon" format="reference|integer"
 ```
 (for the design format, open ic_right_drawable_search.xml and custom_edit_text_bg_empty.xml)
 ```xml
