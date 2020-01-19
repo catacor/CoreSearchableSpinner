@@ -231,6 +231,14 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
         }
     }
 
+    private void hideKeyboard() {
+        View v = currentActivity.getWindow().getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager) currentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
     private void init() {
         mListeners = new ArrayList<>();
         detector = new GestureDetector(this.getContext(),new MyListener());
@@ -288,7 +296,7 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
                     //TODO: add onItemSelected
                     selectedIndex = position;
                     selectedItem = (SearchableItem)itemsAdapter.getItem(position);
-
+                    hideKeyboard();
                     for(Listener listener:mListeners)
                         listener.onItemClicked(position);
                     if(displayResultTextOnSelect)
