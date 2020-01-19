@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StyleableRes;
 
 import com.catacore.coresearchablespinner.R;
 import com.catacore.coresearchablespinner.spinnerItem.adapters.SearchableItemsAdapter;
@@ -37,6 +38,7 @@ import com.catacore.coresearchablespinner.spinnerItem.model.SearchableItem;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +65,9 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
     private static final int DefaultElevation = 16;
 
+    int resIDdisplayBackground;
+    int resIdDropdownRightIcon;
+    int resIdSearchRightIcon;
 
     private Drawable displayBackground;
     private Drawable dropdownRightIcon;
@@ -136,6 +141,38 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
     public void setCurrentActivity(Activity currentActivity) {
         this.currentActivity = currentActivity;
+        initializeIcons();
+
+    }
+
+
+
+    private void initializeIcons() {
+        if(resIDdisplayBackground!=-1)
+            displayBackground = currentActivity.getDrawable(resIDdisplayBackground);
+        if(resIdDropdownRightIcon!=-1)
+            dropdownRightIcon = currentActivity.getDrawable(resIdDropdownRightIcon);
+        if(resIdSearchRightIcon!=-1)
+            searchRightIcon = currentActivity.getDrawable(resIdSearchRightIcon);
+
+        if(displayBackground!=null)
+        {
+            promptTextView.setBackgroundResource(resIDdisplayBackground);
+        }
+
+        if(dropdownRightIcon != null)
+        {
+            promptTextView.setCompoundDrawablesWithIntrinsicBounds(null,null,dropdownRightIcon,null);
+        }
+        if(displayBackground!=null)
+        {
+            searchInput.setBackground(displayBackground);
+        }
+
+        if(searchRightIcon != null)
+        {
+            searchInput.setCompoundDrawablesWithIntrinsicBounds(null,null,searchRightIcon,null);
+        }
     }
 
 
@@ -146,9 +183,9 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
                 0, 0);
 
         try {
-            displayBackground = typedArray.getDrawable(R.styleable.CoreSearchableSpinner_displayBackground);
-            dropdownRightIcon = typedArray.getDrawable(R.styleable.CoreSearchableSpinner_dropdownRightIcon);
-            searchRightIcon = typedArray.getDrawable(R.styleable.CoreSearchableSpinner_searchRightIcon);
+            resIDdisplayBackground = typedArray.getResourceId(R.styleable.CoreSearchableSpinner_displayBackground,-1);
+            resIdDropdownRightIcon = typedArray.getResourceId(R.styleable.CoreSearchableSpinner_dropdownRightIcon,-1);
+            resIdSearchRightIcon = typedArray.getResourceId(R.styleable.CoreSearchableSpinner_searchRightIcon,-1);
             defaultDisplayText = typedArray.getString(R.styleable.CoreSearchableSpinner_defaultDisplayText);
             displayDefaultText = typedArray.getBoolean(R.styleable.CoreSearchableSpinner_displayDefaultText,true);
             defaultEmptyText = typedArray.getString(R.styleable.CoreSearchableSpinner_defaultEmptyText);
@@ -164,6 +201,17 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
     public SearchableItem getSelectedItem(){
         return selectedItem;
+    }
+
+    private static int getResId(String resName, Class<?> c) {
+
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     private void init() {
@@ -186,7 +234,7 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
         if(dropdownRightIcon != null)
         {
-            promptTextView.setCompoundDrawables(null,null,displayBackground,null);
+            promptTextView.setCompoundDrawables(null,null,dropdownRightIcon,null);
         }
 
         if(displayDefaultText)
@@ -432,6 +480,57 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
     }
 
+    public void setSelectedSpinnerItem(String displayText)
+    {
+        if(displayText!=null) {
+            int pos = 0;
+            for (SearchableItem item : items) {
+                if (item.getDisplayText().equals(displayText)) {
+                    selectedIndex = pos;
+                    selectedItem = (SearchableItem) itemsAdapter.getItem(pos);
+
+                    promptTextView.setText(((SearchableItem) itemsAdapter.getItem(pos)).getDisplayText());
+                    return;
+                }
+                pos++;
+            }
+        }
+    }
+
+    public void setSelectedSpinnerItem(Integer position)
+    {
+        if(position!=null) {
+            if (position >= 0 && position < items.size()) {
+
+                selectedIndex = position;
+                selectedItem = (SearchableItem) itemsAdapter.getItem(position);
+
+                promptTextView.setText(((SearchableItem) itemsAdapter.getItem(position)).getDisplayText());
+                return;
+
+            }
+        }
+    }
+
+    public void setSelectedSpinnerItem(SearchableItem _item)
+    {
+        if(_item!=null) {
+            int pos = 0;
+            for (SearchableItem item : items) {
+                if (item.getDisplayText().equals(_item.getDisplayText())) {
+                    if (item.getTags().equals(_item.getTags())) {
+                        selectedIndex = pos;
+                        selectedItem = (SearchableItem) itemsAdapter.getItem(pos);
+
+                        promptTextView.setText(((SearchableItem) itemsAdapter.getItem(pos)).getDisplayText());
+                        return;
+                    }
+                }
+                pos++;
+            }
+        }
+
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

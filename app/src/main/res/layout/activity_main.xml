@@ -22,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:displayEmptyText="false"
+        app:dropdownRightIcon="@drawable/my_right_drpdown"
         android:layout_marginTop="400dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
