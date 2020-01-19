@@ -2,11 +2,17 @@
 <resources>
     <declare-styleable name="CoreSearchableSpinner">
         <attr name="displayBackground" format="reference|integer"/>
+
         <attr name="dropdownRightIcon" format="reference|integer"/>
+        <attr name="displayDropdownRightIcon" format="boolean"/>
+
         <attr name="searchRightIcon" format="reference|integer"/>
+        <attr name="displaySearchRightIcon" format="boolean"/>
 
         <attr name="defaultDisplayText" format="string"/>
         <attr name="displayDefaultText" format="boolean"/>
+        <attr name="displayResultTextOnSelect" format="boolean"/>
+        <attr name="topBottomTextPadding" format="integer"/>
 
         <attr name="defaultEmptyText" format="string"/>
         <attr name="displayEmptyText" format="boolean"/>
