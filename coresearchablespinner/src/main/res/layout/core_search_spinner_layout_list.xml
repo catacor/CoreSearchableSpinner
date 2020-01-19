@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/core_search_container_layout"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:orientation="vertical"
-android:gravity="center_horizontal"
-android:layout_gravity="center_horizontal"
-android:visibility="visible">
-<ListView
-    android:id="@+id/core_search_container_list_view"
-    android:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/core_search_container_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:choiceMode="singleChoice"
-    android:dividerHeight="0dp"
-    android:divider="@null"
-    android:background="@android:color/white"
-    android:layout_gravity="top"/>
-<TextView
-    android:id="@+id/core_search_container_empty_tag"
-    android:visibility="gone"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:textSize="16sp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:gravity="center_horizontal|center_vertical"
-    android:text="@string/empty_list"/>
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/custom_edit_text_bg_empty"
+    android:layout_gravity="center_horizontal"
+    android:visibility="visible">
+
+    <ListView
+        android:id="@+id/core_search_container_list_view"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:dividerHeight="0dp"
+        android:divider="@null"
+        android:background="@android:color/white"
+        android:layout_gravity="top"/>
+    <TextView
+        android:id="@+id/core_search_container_empty_tag"
+        android:visibility="gone"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/empty_list"/>
+
 </LinearLayout>
