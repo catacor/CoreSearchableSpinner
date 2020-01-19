@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         items.add(new SearchableItem("Tom",new ArrayList<>(Arrays.asList("Tyrion Lannister", "Geeks"))));
         spinner.setItems(items);
 
+
+
 //        spinner.setSelectedSpinnerItem(items.get(4));
 
     }

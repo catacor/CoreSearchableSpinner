@@ -428,6 +428,13 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
 
 
+        resetOnFocusListener();
+
+
+
+    }
+
+    private  void resetOnFocusListener(){
         searchInput.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -440,7 +447,7 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
                     }
 
                     popupWindow.dismiss();
-
+                    searchInput.setOnFocusChangeListener(null);
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -492,9 +499,6 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
                 }
             }
         });
-
-
-
     }
 
     public void setSelectedSpinnerItem(String displayText)
@@ -754,6 +758,7 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
     }
     public void hideContent(){
         if(spinnerSearchLayout.getVisibility() == VISIBLE) {
+            resetOnFocusListener();
             dismissStarted = true;
             popupWindow.dismiss();
             searchInput.setText("");
