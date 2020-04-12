@@ -3,12 +3,14 @@ package com.catacore.coresearchablespinner;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -337,12 +339,85 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                //hideEdit();
+                if(spinnerSearchLayout.getVisibility() == VISIBLE) {
+                    resetOnFocusListener();
+                    dismissStarted = true;
+//                    popupWindow.dismiss();
+                    searchInput.setText("");
+                    spinnerSearchLayout.setVisibility(GONE);
+                    invalidate();
+                    requestLayout();
+                }
+
+
+
             }
         });
-        popupWindow.setFocusable(false);
+
+        popupWindow.setTouchInterceptor(new OnTouchListener()
+        {
+
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE)
+                {
+                    popupWindow.dismiss();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+//        popupWindow.setTouchInterceptor(new OnTouchListener()
+//        {
+//
+//            public boolean onTouch(View v, MotionEvent event)
+//            {
+//                Rect editTextRect = new Rect();
+//                displayLoayout.getHitRect(editTextRect);
+//
+//                Rect editTextRect2 = new Rect();
+//                contentList.getHitRect(editTextRect2);
+//
+//                Log.i("TOUCH","x=" + editTextRect.left);
+//                Log.i("TOUCH","y=" + editTextRect.top);
+//                Log.i("TOUCH","x=" + editTextRect.right);
+//                Log.i("TOUCH","y=" + editTextRect.bottom);
+//
+//                Log.i("TOUCH","x2=" + editTextRect2.left);
+//                Log.i("TOUCH","y2=" + editTextRect2.top);
+//                Log.i("TOUCH","x2=" + editTextRect2.right);
+//                Log.i("TOUCH","y2=" + editTextRect2.bottom);
+//
+//                Log.i("TOUCH","mx=" + event.getX());
+//                Log.i("TOUCH","my=" + event.getY());
+//
+//                if(event.getX() >= editTextRect.left && event.getX() <= editTextRect.right) {
+//                    if (event.getY() >= editTextRect2.top && event.getY() <= editTextRect.bottom + editTextRect2.bottom) {
+//                        //inside touch
+//                    } else {
+//                        resetOnFocusListener();
+//                        dismissStarted = true;
+//                        popupWindow.dismiss();
+//                        searchInput.setText("");
+//                        spinnerSearchLayout.setVisibility(GONE);
+//                        invalidate();
+//                        requestLayout();
+//
+//                        return false;
+//                    }
+//                }
+//
+//
+//                return true;
+//            }
+//        });
+
+        popupWindow.setFocusable(true);
         popupWindow.setElevation(DefaultElevation);
         popupWindow.setBackgroundDrawable(mContext.getDrawable(R.drawable.spinner_drawable));
+        popupWindow.setOutsideTouchable(true);
 
 
         searchInput = findViewById(R.id.custom_spinner_search_input);
@@ -561,6 +636,8 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
 
     }
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
@@ -594,6 +671,8 @@ public class CoreSearchableSpinner extends RelativeLayout implements ExtendedEdi
         return result;
 
     }
+
+
 
     private void recalculateContentAndShow(){
         int totalListHeigh = getListHeigh();

@@ -54,11 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN)
-        {
-            hideKeyboard(this);
-            spinner.hideContent();
-        }
+//        if(event.getAction() == MotionEvent.ACTION_DOWN)
+//        {
+//            hideKeyboard(this);
+//            spinner.hideContent();
+//        }
 
         return super.onTouchEvent(event);
     }
