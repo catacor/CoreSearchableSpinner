@@ -26,13 +26,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         spinner = findViewById(R.id.my_spinner);
-        spinner.setCurrentActivity(this);
         ArrayList<SearchableItem> items = new ArrayList<>();
         items.add(new SearchableItem("Steve", new ArrayList<>(Arrays.asList("Geeks", "for", "Geeks"))));
         items.add(new SearchableItem("Tim",new ArrayList<>(Arrays.asList("Gregor Clegane"))));
         items.add(new SearchableItem("Lucy",new ArrayList<>(Arrays.asList("Khal Drogo"))));
         items.add(new SearchableItem("Pat",new ArrayList<>(Arrays.asList("Cersei Lannister"))));
         items.add(new SearchableItem("Angela",new ArrayList<>(Arrays.asList("Sandor Clegane"))));
+        items.add(new SearchableItem("Tom",new ArrayList<>(Arrays.asList("Tyrion Lannister", "Geeks"))));
+        items.add(new SearchableItem("Tom",new ArrayList<>(Arrays.asList("Tyrion Lannister", "Geeks"))));
+        items.add(new SearchableItem("Tom",new ArrayList<>(Arrays.asList("Tyrion Lannister", "Geeks"))));
+        items.add(new SearchableItem("Tom",new ArrayList<>(Arrays.asList("Tyrion Lannister", "Geeks"))));
         items.add(new SearchableItem("Tom",new ArrayList<>(Arrays.asList("Tyrion Lannister", "Geeks"))));
         spinner.setItems(items);
 
@@ -44,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(spinner.isContentVisible())
-        {
-            spinner.hideContent();
-            return;
-        }
+//        if(spinner.isContentVisible())
+//        {
+//            spinner.hideContent();
+//            return;
+//        }
         super.onBackPressed();
     }
 

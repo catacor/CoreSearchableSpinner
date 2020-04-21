@@ -10,8 +10,6 @@
     android:layout_gravity="center_horizontal"
     android:visibility="visible">
 
-
-
     <ListView
         android:id="@+id/core_search_container_list_view"
         android:visibility="visible"
@@ -23,6 +21,7 @@
         android:background="@android:color/white"
         android:layout_gravity="top"
         android:layout_margin="1dp"/>
+
     <TextView
         android:id="@+id/core_search_container_empty_tag"
         android:visibility="gone"
@@ -34,6 +33,5 @@
         android:background="@android:color/white"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/empty_list"/>
-
 
 </LinearLayout>
