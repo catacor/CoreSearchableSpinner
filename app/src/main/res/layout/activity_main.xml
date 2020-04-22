@@ -19,7 +19,7 @@
         app:displayDropdownRightIcon="false"
         app:displaySearchRightIcon="false"
         app:displayResultTextOnSelect="false"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="250dp"
         app:topBottomTextPadding="30"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

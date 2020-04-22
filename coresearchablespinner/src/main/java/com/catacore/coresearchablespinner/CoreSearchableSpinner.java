@@ -19,6 +19,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,6 +34,7 @@ import com.catacore.coresearchablespinner.spinnerItem.model.SearchableItem;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+import net.yslibrary.android.keyboardvisibilityevent.Unregistrar;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,7 +51,7 @@ public class CoreSearchableSpinner  extends RelativeLayout {
 
     private Context mContext;
     private RelativeLayout fullSpinnerRelativeLayout;
-    private ExtendedEditText inputEditText;
+    private EditText inputEditText;
     private TextView displayTextView;
     private ImageView displayIcon;
 
@@ -58,6 +60,7 @@ public class CoreSearchableSpinner  extends RelativeLayout {
     private PopupWindow popupWindow;
     private LinearLayout customLayoutList;
     private ListView contentList;
+    private Unregistrar unregistrar;
 
     private static final int DefaultElevation = 16;
     private LayoutInflater inflater;
@@ -120,44 +123,120 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         this.items = items;
         actualizeSpinnerItems();
 
-        KeyboardVisibilityEvent.setEventListener(mActivity, new KeyboardVisibilityEventListener() {
+
+//        KeyboardVisibilityEvent.setEventListener(mActivity, new KeyboardVisibilityEventListener() {
+//            @Override
+//            public void onVisibilityChanged(boolean b) {
+//                if(b)
+//                {
+//                    Log.d("CORE_SPINNER","Keyboard open");
+//                    isKeyboardOpen = true;
+//                    Handler handler = new Handler();
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if(isPopupOpen)
+//                            {
+//                                redrawOnDispatchKeyboard = true;
+//                                popupWindow.dismiss();
+//                                redrawPopupList();
+//                            }
+//                        }
+//                    }, 100);
+//
+//
+//                }
+//                else
+//                {
+//                    Log.d("CORE_SPINNER","Keyboard close");
+//                    isKeyboardOpen = false;
+//                    if(isPopupOpen)
+//                    {
+//
+//                        redrawOnDispatchKeyboard = true;
+//                        popupWindow.dismiss();
+//                        redrawPopupList();
+//
+//                    }
+//
+//                }
+//            }
+//        });
+
+        mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        registerKeyboardListener();
+    }
+
+    private void registerKeyboardListener(){
+        if(unregistrar!=null) {
+            unregistrar.unregister();
+            unregistrar = null;
+        }
+
+
+
+        KeyboardVisibilityEvent keyboardVisibilityEvent = KeyboardVisibilityEvent.INSTANCE;
+        unregistrar = keyboardVisibilityEvent.registerEventListener(mActivity, new KeyboardVisibilityEventListener() {
             @Override
             public void onVisibilityChanged(boolean b) {
-                if(b)
-                {
-                    Log.d("CORE_SPINNER","Keyboard open");
+//                registerKeyboardListener();
+                if (b) {
+                    if(isKeyboardOpen)
+                    {
+                        //bug on keyboard dismissing
+                        Log.d("CORE_SPINNER", "Keyboard bug");
+                        inputEditText.clearFocus();
+                        inputEditText.requestFocus();
+                        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(inputEditText.getWindowToken(), 0);
+
+                    }
+
+                    Log.d("CORE_SPINNER", "Keyboard open");
                     isKeyboardOpen = true;
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(isPopupOpen)
-                            {
+                            if (isPopupOpen) {
                                 redrawOnDispatchKeyboard = true;
                                 popupWindow.dismiss();
-                                redrawPopupList();
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        redrawPopupList();
+                                    }
+                                }, 200);
+
                             }
                         }
                     }, 100);
 
 
-                }
-                else
-                {
-                    Log.d("CORE_SPINNER","Keyboard close");
+                } else {
+                    Log.d("CORE_SPINNER", "Keyboard close");
                     isKeyboardOpen = false;
-                    if(isPopupOpen)
-                    {
+                    if (isPopupOpen) {
 
                         redrawOnDispatchKeyboard = true;
                         popupWindow.dismiss();
-                        redrawPopupList();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                redrawPopupList();
+                            }
+                        }, 200);
 
                     }
 
                 }
             }
         });
+
 
     }
 
@@ -247,6 +326,7 @@ public class CoreSearchableSpinner  extends RelativeLayout {
             public void onFocusChange(View view, boolean b) {
                 if(b)
                 {
+
                     saveLocations();
                     Log.d("CORE_SPINNER","Edit text has focus");
                     wasEditTextClicked = true;
@@ -410,7 +490,13 @@ public class CoreSearchableSpinner  extends RelativeLayout {
                         itemsAdapter.notifyDataSetChanged();
                         redrawOnItemsChanged = true;
                         popupWindow.dismiss();
-                        redrawPopupList();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                redrawPopupList();
+                            }
+                        }, 200);
                     }
                 }
 
@@ -442,6 +528,8 @@ public class CoreSearchableSpinner  extends RelativeLayout {
     }
 
     private void redrawPopupList() {
+
+        registerKeyboardListener();
 
         Log.d("CORE_SPINNER","REDRAW");
         int totalListHeigh = getListHeigh();
@@ -501,17 +589,22 @@ public class CoreSearchableSpinner  extends RelativeLayout {
 
             View v = CoreSearchableSpinner.this;
             int[] loc = new int[2];
-//            int[] loc2 = new int[2];
-            // fill loc with the coordinates of your view (loc[0] = x, looc[1] = y)
             fullSpinnerRelativeLayout.getLocationOnScreen(loc);
-//            v.getLocationOnScreen(loc2);
 
-//            Log.d("CORE_SPINNER","Locations before keyboard: X: "+loc[0] +" Y:"+loc[1]);
+            Log.d("CORE_SPINNER","Locations after keyboard: X: "+loc[0] +" Y:"+loc[1]);
             int decalajResizePan =0;
+
             if(isKeyboardOpen)
                 decalajResizePan = Math.abs(locationsBeforeOnTouch[1] - loc[1]);
 
-            popupWindow.showAsDropDown(fullSpinnerRelativeLayout, fullSpinnerRelativeLayout.getLeft(), -maxItems * itemSize - fullSpinnerRelativeLayout.getMeasuredHeight() - decalajResizePan);
+//            if(decalajResizePan!=0)
+//            {
+//                registerKeyboardListener();
+//            }
+
+            int offsetY = -maxItems * itemSize - fullSpinnerRelativeLayout.getMeasuredHeight() - decalajResizePan;
+            popupWindow.showAsDropDown(fullSpinnerRelativeLayout, 0 ,offsetY);
+
             isPopupOpen = true;
         }
     }
@@ -519,6 +612,7 @@ public class CoreSearchableSpinner  extends RelativeLayout {
 
 
     private boolean interceptKeyEvent(View view, int keyCode, KeyEvent keyEvent) {
+        Log.d("CORE_SPINNER","key interceptor");
         if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
 
             if (isSpinnerOpen) {
@@ -538,7 +632,13 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         inputEditText.setVisibility(VISIBLE);
         isSpinnerOpen = true;
 
-        redrawPopupList();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                redrawPopupList();
+            }
+        }, 200);
 
     }
 
@@ -573,7 +673,7 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         // fill loc with the coordinates of your view (loc[0] = x, looc[1] = y)
         fullSpinnerRelativeLayout.getLocationOnScreen(loc);
 
-        if(loc[1] > r.bottom)
+        if(locationsBeforeOnTouch[1] > loc[1])
         {
             Log.d("CORE_SPINNER","input under keyboard");
         }
@@ -585,6 +685,11 @@ public class CoreSearchableSpinner  extends RelativeLayout {
     }
 
     private int getDistanceToTop(){
+        Log.d("CORE_SPINNER","Calculate distance to top");
+        Rect r = new Rect();
+        View rootView = mActivity.getWindow().getDecorView();
+        rootView.getWindowVisibleDisplayFrame(r);
+
         // instantiate DisplayMetrics
         DisplayMetrics dm = new DisplayMetrics();
         // fill dm with data from current display
@@ -593,8 +698,16 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         int[] loc = new int[2];
         // fill loc with the coordinates of your view (loc[0] = x, looc[1] = y)
         fullSpinnerRelativeLayout.getLocationOnScreen(loc);
+        int distanceViewKeyboard =0;
+        if(locationsBeforeOnTouch[1] > loc[1])
+        {
+            Log.d("CORE_SPINNER","input under keyboard - reacalculating top distance");
+            //recalculate the heigh
+            distanceViewKeyboard =locationsBeforeOnTouch[1] - loc[1] ;
+        }
+
         // calculate the distance from the TOP(its y-coordinate) of your view to the bottom of the screen
-        int distance = loc[1];
+        int distance = loc[1] - distanceViewKeyboard;
 
         return distance;
     }
