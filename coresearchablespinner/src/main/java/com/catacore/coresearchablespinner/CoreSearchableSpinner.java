@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,6 +48,16 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         void onSpinnerDismissed();
         void onItemClicked(int position);
     }
+
+    public SearchableItem getSelectedItem() {
+        return selectedItem;
+    }
+
+    public int getSelectedIndex()
+    {
+        return  selectedIndex;
+    }
+
     private ArrayList<Listener> mListeners;
 
     private Context mContext;
@@ -67,6 +78,7 @@ public class CoreSearchableSpinner  extends RelativeLayout {
     private SearchableItemsAdapter itemsAdapter;
     private ArrayList<SearchableItem> items;
     private int selectedIndex;
+
     private SearchableItem selectedItem;
 
     private Activity mActivity;
@@ -79,6 +91,21 @@ public class CoreSearchableSpinner  extends RelativeLayout {
     private boolean redrawOnItemsChanged;
     private boolean dismissStarted;
     private int[] locationsBeforeOnTouch = new int[2];
+
+    int resIDdisplayBackground;
+    int resIdDropdownRightIcon;
+    int resIdSearchRightIcon;
+    private Drawable displayBackground;
+    private Drawable dropdownRightIcon;
+    private Boolean displayDropdownRightIcon;
+    private Drawable searchRightIcon;
+    private Boolean displaySearchRightIcon;
+    private String defaultDisplayText;
+    private Boolean displayDefaultText;
+    private Boolean displayResultTextOnSelect;
+    private String defaultEmptyText;
+    private Boolean displayEmptyText;
+    private Integer topBottomTextPadding;
 
     public CoreSearchableSpinner(Context context) {
         this(context,null);
@@ -97,7 +124,6 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         mContext = context;
         getTypedArray(attrs);
 
-//        mActivity = (Activity) mContext;
         init();
     }
 
@@ -117,51 +143,64 @@ public class CoreSearchableSpinner  extends RelativeLayout {
                 attrs,
                 R.styleable.CoreSearchableSpinner,
                 0, 0);
+
+        try {
+            resIDdisplayBackground = typedArray.getResourceId(R.styleable.CoreSearchableSpinner_displayBackground,-1);
+            resIdDropdownRightIcon = typedArray.getResourceId(R.styleable.CoreSearchableSpinner_dropdownRightIcon,-1);
+            displayDropdownRightIcon = typedArray.getBoolean(R.styleable.CoreSearchableSpinner_displayDropdownRightIcon,true);
+            resIdSearchRightIcon = typedArray.getResourceId(R.styleable.CoreSearchableSpinner_searchRightIcon,-1);
+            displaySearchRightIcon = typedArray.getBoolean(R.styleable.CoreSearchableSpinner_displaySearchRightIcon,true);
+            defaultDisplayText = typedArray.getString(R.styleable.CoreSearchableSpinner_defaultDisplayText);
+            displayDefaultText = typedArray.getBoolean(R.styleable.CoreSearchableSpinner_displayDefaultText,false);
+            displayResultTextOnSelect = typedArray.getBoolean(R.styleable.CoreSearchableSpinner_displayResultTextOnSelect,true);
+            defaultEmptyText = typedArray.getString(R.styleable.CoreSearchableSpinner_defaultEmptyText);
+            displayEmptyText = typedArray.getBoolean(R.styleable.CoreSearchableSpinner_displayEmptyText,true);
+            topBottomTextPadding = typedArray.getInteger(R.styleable.CoreSearchableSpinner_topBottomTextPadding,0);
+        } finally {
+            typedArray.recycle();
+        }
+    }
+
+    private void initializeIcons() {
+        if(resIDdisplayBackground!=-1)
+            displayBackground = mActivity.getDrawable(resIDdisplayBackground);
+        if(resIdDropdownRightIcon!=-1)
+            dropdownRightIcon = mActivity.getDrawable(resIdDropdownRightIcon);
+        if(resIdSearchRightIcon!=-1)
+            searchRightIcon = mActivity.getDrawable(resIdSearchRightIcon);
+
+
+
+        if(displayBackground!=null)
+        {
+            fullSpinnerRelativeLayout.setBackgroundResource(resIDdisplayBackground);
+        }
+
+        if(displayDefaultText)
+        {
+            if(defaultDisplayText!=null &&  !defaultDisplayText.isEmpty())
+            {
+                displayTextView.setText(defaultDisplayText);
+            }
+            else
+            {
+                displayTextView.setText("Click to open");
+            }
+        }
+
+        changeIcons();
+
     }
 
     public void setItems(ArrayList<SearchableItem> items){
         this.items = items;
         actualizeSpinnerItems();
 
-
-//        KeyboardVisibilityEvent.setEventListener(mActivity, new KeyboardVisibilityEventListener() {
-//            @Override
-//            public void onVisibilityChanged(boolean b) {
-//                if(b)
-//                {
-//                    Log.d("CORE_SPINNER","Keyboard open");
-//                    isKeyboardOpen = true;
-//                    Handler handler = new Handler();
-//                    handler.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if(isPopupOpen)
-//                            {
-//                                redrawOnDispatchKeyboard = true;
-//                                popupWindow.dismiss();
-//                                redrawPopupList();
-//                            }
-//                        }
-//                    }, 100);
-//
-//
-//                }
-//                else
-//                {
-//                    Log.d("CORE_SPINNER","Keyboard close");
-//                    isKeyboardOpen = false;
-//                    if(isPopupOpen)
-//                    {
-//
-//                        redrawOnDispatchKeyboard = true;
-//                        popupWindow.dismiss();
-//                        redrawPopupList();
-//
-//                    }
-//
-//                }
-//            }
-//        });
+        if(!displayDefaultText)
+        {
+            if(items.size()!=0)
+                displayTextView.setText(items.get(0).getDisplayText());
+        }
 
         mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -173,8 +212,6 @@ public class CoreSearchableSpinner  extends RelativeLayout {
             unregistrar.unregister();
             unregistrar = null;
         }
-
-
 
         KeyboardVisibilityEvent keyboardVisibilityEvent = KeyboardVisibilityEvent.INSTANCE;
         unregistrar = keyboardVisibilityEvent.registerEventListener(mActivity, new KeyboardVisibilityEventListener() {
@@ -250,6 +287,8 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         inputEditText = findViewById(R.id.spinner_input_edit_text);
         displayTextView = findViewById(R.id.spinner_display_text_view);
         displayIcon = findViewById(R.id.spinner_display_icon);
+
+        initializeIcons();
 
         initVariables();
         setBehaviour();
@@ -586,7 +625,6 @@ public class CoreSearchableSpinner  extends RelativeLayout {
             contentList.setLayoutParams(params);
             contentList.requestLayout();
 
-
             View v = CoreSearchableSpinner.this;
             int[] loc = new int[2];
             fullSpinnerRelativeLayout.getLocationOnScreen(loc);
@@ -597,19 +635,15 @@ public class CoreSearchableSpinner  extends RelativeLayout {
             if(isKeyboardOpen)
                 decalajResizePan = Math.abs(locationsBeforeOnTouch[1] - loc[1]);
 
-//            if(decalajResizePan!=0)
-//            {
-//                registerKeyboardListener();
-//            }
-
             int offsetY = -maxItems * itemSize - fullSpinnerRelativeLayout.getMeasuredHeight() - decalajResizePan;
             popupWindow.showAsDropDown(fullSpinnerRelativeLayout, 0 ,offsetY);
 
             isPopupOpen = true;
         }
+
+        for(Listener listener: mListeners)
+            listener.onSpinnerShown();
     }
-
-
 
     private boolean interceptKeyEvent(View view, int keyCode, KeyEvent keyEvent) {
         Log.d("CORE_SPINNER","key interceptor");
@@ -632,6 +666,8 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         inputEditText.setVisibility(VISIBLE);
         isSpinnerOpen = true;
 
+        changeIcons();
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -639,6 +675,9 @@ public class CoreSearchableSpinner  extends RelativeLayout {
                 redrawPopupList();
             }
         }, 200);
+
+        for(Listener listener: mListeners)
+            listener.onSpinnerClicked();
 
     }
 
@@ -651,6 +690,43 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         if(isKeyboardOpen)
             hideKeyboard();
         isSpinnerOpen = false;
+        changeIcons();
+        for(Listener listener: mListeners)
+            listener.onSpinnerDismissed();
+    }
+
+    private void changeIcons() {
+
+        if(isSpinnerOpen)
+        {
+            //set for search
+            if(displaySearchRightIcon)
+            {
+                if(searchRightIcon != null)
+                    displayIcon.setImageDrawable(searchRightIcon);
+                else
+                    displayIcon.setImageDrawable(mContext.getDrawable(R.drawable.ic_search));
+            }
+            else
+            {
+                displayIcon.setImageDrawable(mContext.getDrawable(android.R.color.transparent));
+            }
+        }
+        else
+        {
+            //set for dropdown
+            if(displayDropdownRightIcon)
+            {
+                if(dropdownRightIcon != null)
+                    displayIcon.setImageDrawable(dropdownRightIcon);
+                else
+                    displayIcon.setImageDrawable(mContext.getDrawable(R.drawable.ic_expand_list));
+            }
+            else
+            {
+                displayIcon.setImageDrawable(mContext.getDrawable(android.R.color.transparent));
+            }
+        }
     }
 
     private void actualizeSpinnerItems() {
