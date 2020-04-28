@@ -31,4 +31,20 @@ public class SearchableItem {
     public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
+
+    public boolean equal(SearchableItem second)
+    {
+        if(!displayText.equals(second.displayText))
+            return false;
+        if(tags.size()!= second.tags.size())
+            return false;
+
+        for(int i=0;i<tags.size();i++)
+        {
+            if(!tags.get(i).equals(second.tags.get(i)))
+                return false;
+        }
+
+        return true;
+    }
 }

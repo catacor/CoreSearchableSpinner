@@ -456,10 +456,19 @@ public class CoreSearchableSpinner  extends RelativeLayout {
                     selectedIndex = position;
                     selectedItem = (SearchableItem)itemsAdapter.getItem(position);
 
-                    for(Listener listener: mListeners)
-                        listener.onItemClicked(position);
+                    for (int i = 0; i < items.size(); i++) {
+                        if(selectedItem.equal(items.get(i)))
+                        {
+                            selectedItem = items.get(i);
+                            selectedIndex = i;
+                            break;
+                        }
+                    }
 
-                    displayTextView.setText( ((SearchableItem)itemsAdapter.getItem(position)).getDisplayText());
+                    for(Listener listener: mListeners)
+                        listener.onItemClicked(selectedIndex);
+
+                    displayTextView.setText( selectedItem.getDisplayText());
                     closeSpinner();
                 }
             }
@@ -693,6 +702,17 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         changeIcons();
         for(Listener listener: mListeners)
             listener.onSpinnerDismissed();
+    }
+
+    public void setCurrentItem(int position)
+    {
+        if(position>0 && position<items.size()) {
+            if(position!= selectedIndex)
+            selectedIndex = position;
+            selectedItem = items.get(position);
+
+            displayTextView.setText(selectedItem.getDisplayText());
+        }
     }
 
     private void changeIcons() {
