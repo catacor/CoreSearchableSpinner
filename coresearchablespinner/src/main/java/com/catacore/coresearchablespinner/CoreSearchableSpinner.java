@@ -706,12 +706,13 @@ public class CoreSearchableSpinner  extends RelativeLayout {
 
     public void setCurrentItem(int position)
     {
-        if(position>0 && position<items.size()) {
-            if(position!= selectedIndex)
-            selectedIndex = position;
-            selectedItem = items.get(position);
+        if(position>=0 && position<items.size()) {
+            if(position != selectedIndex) {
+                selectedIndex = position;
+                selectedItem = items.get(position);
 
-            displayTextView.setText(selectedItem.getDisplayText());
+                displayTextView.setText(selectedItem.getDisplayText());
+            }
         }
     }
 
