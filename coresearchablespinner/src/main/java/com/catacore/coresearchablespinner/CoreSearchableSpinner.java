@@ -716,6 +716,11 @@ public class CoreSearchableSpinner  extends RelativeLayout {
         }
     }
 
+    public void clearListeners()
+    {
+        mListeners.clear();
+    }
+
     private void changeIcons() {
 
         if(isSpinnerOpen)
