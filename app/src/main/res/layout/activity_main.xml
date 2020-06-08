@@ -19,8 +19,10 @@
         app:displaySearchRightIcon="true"
         app:displayDefaultText="true"
         app:defaultDisplayText="Heloo"
-        android:layout_marginTop="650dp"
+        android:layout_marginTop="100dp"
         app:topBottomTextPadding="30"
+        app:allwaysDisplayText="true"
+        app:allwaysDisplayTextValue=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

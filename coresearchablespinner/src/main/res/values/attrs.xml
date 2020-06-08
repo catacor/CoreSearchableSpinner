@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CoreSearchableSpinner">
-        <attr name="displayBackground" format="reference|integer"/>
+        <attr name="displayBackground" format="reference"/>
 
-        <attr name="dropdownRightIcon" format="reference|integer"/>
+        <attr name="dropdownRightIcon" format="reference"/>
         <attr name="displayDropdownRightIcon" format="boolean"/>
 
-        <attr name="searchRightIcon" format="reference|integer"/>
+        <attr name="searchRightIcon" format="reference"/>
         <attr name="displaySearchRightIcon" format="boolean"/>
 
         <attr name="defaultDisplayText" format="string"/>
@@ -14,8 +14,13 @@
         <attr name="displayResultTextOnSelect" format="boolean"/>
         <attr name="topBottomTextPadding" format="integer"/>
 
+        <attr name="textSizeSpinner" format="dimension"/>
+
         <attr name="defaultEmptyText" format="string"/>
         <attr name="displayEmptyText" format="boolean"/>
+
+        <attr name="allwaysDisplayText" format="boolean"/>
+        <attr name="allwaysDisplayTextValue" format="string"/>
 
     </declare-styleable>
 </resources>

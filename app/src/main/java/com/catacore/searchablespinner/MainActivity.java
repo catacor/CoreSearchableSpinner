@@ -40,37 +40,5 @@ public class MainActivity extends AppCompatActivity {
         spinner.setItems(items);
 
 
-
-//        spinner.setSelectedSpinnerItem(items.get(4));
-
-    }
-
-    @Override
-    public void onBackPressed() {
-//        if(spinner.isContentVisible())
-//        {
-//            spinner.hideContent();
-//            return;
-//        }
-        super.onBackPressed();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-//        if(event.getAction() == MotionEvent.ACTION_DOWN)
-//        {
-//            hideKeyboard(this);
-//            spinner.hideContent();
-//        }
-
-        return super.onTouchEvent(event);
-    }
-
-    public static void hideKeyboard(Activity activity) {
-        View v = activity.getWindow().getCurrentFocus();
-        if (v != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
     }
 }
